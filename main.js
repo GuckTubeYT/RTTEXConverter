@@ -48,7 +48,6 @@ async function RTTEXPack(namePNG, saveFile) {
 }
 
 async function RTTEXUnpack(nameFile, savePNG) {
-    let memPos = 0;
     var data = fs.readFileSync(nameFile)
     if (data.slice(0, 6).toString() === "RTPACK") {
         data = zlib.inflateSync(data.slice(32))
