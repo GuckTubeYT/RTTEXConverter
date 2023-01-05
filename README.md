@@ -1,7 +1,5 @@
 # RTTEXConverter
 RTTEX Converter in JS
-
-gabut gw
 # Requirement
 - Sharp
 # Example
