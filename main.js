@@ -20,8 +20,6 @@ async function RTTEXPack(namePNG, saveFile) {
 
     RTTEXHeader.write("RTTXTR")
     memPos += 8; // 6 (RTTXTR) + 2 (1 byte = version, 1 byte = reserved)
-    console.log(getLowestPowerOf2(PNGMetaData.height))
-    console.log(getLowestPowerOf2(PNGMetaData.width))
     RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.height), memPos)
     memPos += 4;
     RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.width), memPos)
