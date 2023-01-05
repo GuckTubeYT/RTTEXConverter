@@ -64,3 +64,8 @@ async function RTTEXUnpack(nameFile, savePNG) {
     }
     else console.log("This is not a RTTEX file")
 }
+
+module.exports = {
+    RTTEXPack: RTTEXPack,
+    RTTEXUnpack: RTTEXUnpack
+}
