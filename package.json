@@ -1,0 +1,12 @@
+{
+  "name": "RTTEXConverter",
+  "version": "0.0.1",
+  "description": "A RTTEX Converter in Node JS",
+  "main": "main.js",
+  "dependencies": {
+    "sharp": "^0.31.3"
+  },
+  "repository": {
+    "url": "https://github.com/GuckTubeYT/RTTEXConverter"
+  }
+}
