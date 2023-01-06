@@ -9,39 +9,27 @@ function getLowestPowerOf2(n) {
 }
 
 async function RTTEXPack(namePNG) {
-    let memPos = 0;
-
     const RTTEXHeader = Buffer.alloc(0x7c)
     var dataPNG = await sharp(namePNG)
     var PNGMetaData = await dataPNG.metadata()
     var PNGBuffer = await dataPNG.flip().raw().toBuffer()
 
     RTTEXHeader.write("RTTXTR")
-    memPos += 8; // 6 (RTTXTR) + 2 (1 byte = version, 1 byte = reserved)
-    RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.height), memPos)
-    memPos += 4;
-    RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.width), memPos)
-    memPos += 4;
-    RTTEXHeader.writeInt32LE(5121, memPos)
-    memPos += 4;
-    RTTEXHeader.writeInt32LE(PNGMetaData.height, memPos)
-    memPos += 4;
-    RTTEXHeader.writeInt32LE(PNGMetaData.width, memPos)
-    memPos += 4;
-    RTTEXHeader[memPos++] = 1;
-    RTTEXHeader[memPos++] = 0;
+    RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.height), 8)
+    RTTEXHeader.writeInt32LE(getLowestPowerOf2(PNGMetaData.width), 12)
+    RTTEXHeader.writeInt32LE(5121, 16)
+    RTTEXHeader.writeInt32LE(PNGMetaData.height, 20)
+    RTTEXHeader.writeInt32LE(PNGMetaData.width, 24)
+    RTTEXHeader[28] = 1;
+    RTTEXHeader[29] = 0;
 
     const RTPACKHeader = Buffer.alloc(32)
     const compressBuffer = zlib.deflateSync(Buffer.concat([RTTEXHeader, PNGBuffer]))
 
     RTPACKHeader.write("RTPACK")
-    memPos = 8; // 6 (RTPACK) + 2 (1 byte = version, 1 byte = reserved)
-    RTPACKHeader.writeUint32LE(compressBuffer.length, memPos)
-    memPos += 4;
-    RTPACKHeader.writeUInt32LE(0x7c + PNGBuffer, memPos)
-    memPos += 4;
-    RTPACKHeader[memPos] = 1
-
+    RTPACKHeader.writeUint32LE(compressBuffer.length, 8)
+    RTPACKHeader.writeUInt32LE(0x7c + PNGBuffer, 12)
+    RTPACKHeader[16] = 1
     return Buffer.concat([RTPACKHeader, compressBuffer])
 }
 
@@ -50,8 +38,8 @@ async function RTTEXUnpack(nameFile) {
     if (data.slice(0, 6).toString() === "RTPACK") data = zlib.inflateSync(data.slice(32))
     if (data.slice(0, 6).toString() === "RTTXTR") {
         return await sharp(data.slice(0x7c), {raw: {
-            width: data.readInt32LE(0x0C),
-            height: data.readInt32LE(0x08),
+            width: data.readInt32LE(8),
+            height: data.readInt32LE(12),
             channels: 3 + data[0x1c]
         }}).flip(true).toFormat("png").toBuffer()
     }
