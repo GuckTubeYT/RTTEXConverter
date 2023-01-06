@@ -10,7 +10,7 @@ function getLowestPowerOf2(n) {
     return lowest
 }
 
-async function RTTEXPack(namePNG, saveFile) {
+async function RTTEXPack(namePNG) {
     let memPos = 0;
 
     const RTTEXHeader = Buffer.alloc(0x7c)
@@ -37,27 +37,27 @@ async function RTTEXPack(namePNG, saveFile) {
     const compressBuffer = zlib.deflateSync(Buffer.concat([RTTEXHeader, PNGBuffer]))
 
     RTPACKHeader.write("RTPACK")
-    memPos = 8; // // 6 (RTPACK) + 2 (1 byte = version, 1 byte = reserved)
+    memPos = 8; // 6 (RTPACK) + 2 (1 byte = version, 1 byte = reserved)
     RTPACKHeader.writeUint32LE(compressBuffer.length, memPos)
     memPos += 4;
     RTPACKHeader.writeUInt32LE(0x7c + PNGBuffer, memPos)
     memPos += 4;
     RTPACKHeader[memPos] = 1
 
-    fs.writeFileSync(saveFile, Buffer.concat([RTPACKHeader, compressBuffer]))
+    return Buffer.concat([RTPACKHeader, compressBuffer])
 }
 
-async function RTTEXUnpack(nameFile, savePNG) {
+async function RTTEXUnpack(nameFile) {
     var data = fs.readFileSync(nameFile)
     if (data.slice(0, 6).toString() === "RTPACK") {
         data = zlib.inflateSync(data.slice(32))
     }
     if (data.slice(0, 6).toString() === "RTTXTR") {
-        await sharp(data.slice(0x7c), {raw: {
+        return await sharp(data.slice(0x7c), {raw: {
             width: data.readInt32LE(0x08),
             height: data.readInt32LE(0x0C),
             channels: 3 + data[0x1c]
-        }}).flip(true).toFormat("png").toFile(savePNG) // langsung nge write bang
+        }}).flip(true).toFormat("png").toBuffer() // langsung nge write bang
     }
     else console.log("This is not a RTTEX file")
 }
