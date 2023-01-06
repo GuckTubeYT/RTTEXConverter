@@ -4,9 +4,14 @@ RTTEX Converter in JS
 - Sharp
 # Example
 ```
-const test = require("./main.js")
-test.RTTEXPack("name.png", "name.rttex")
-test.RTTEXUnpack("name.rttex", "name.png")
+(async function() {
+    const test = require("./main.js")
+    const fs = require("fs")
+    
+    fs.writeFileSync("name.rttex", await test.RTTEXPack("name.png"))
+    fs.writeFileSync("name.png", await test.RTTEXUnpack("name.rttex"))
+})()
+
 ```
 # Credit
 - https://github.com/ZTzTopia/RTTEXConverterJS
