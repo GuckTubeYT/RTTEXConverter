@@ -4,9 +4,7 @@ const sharp = require("sharp")
 
 function getLowestPowerOf2(n) {
     let lowest = 1;
-    while (lowest < n) {
-        lowest <<= 1;
-    }
+    while (lowest < n) lowest <<= 1;
     return lowest
 }
 
@@ -49,15 +47,13 @@ async function RTTEXPack(namePNG) {
 
 async function RTTEXUnpack(nameFile) {
     var data = fs.readFileSync(nameFile)
-    if (data.slice(0, 6).toString() === "RTPACK") {
-        data = zlib.inflateSync(data.slice(32))
-    }
+    if (data.slice(0, 6).toString() === "RTPACK") data = zlib.inflateSync(data.slice(32))
     if (data.slice(0, 6).toString() === "RTTXTR") {
         return await sharp(data.slice(0x7c), {raw: {
-            width: data.readInt32LE(0x08),
-            height: data.readInt32LE(0x0C),
+            width: data.readInt32LE(0x0C),
+            height: data.readInt32LE(0x08),
             channels: 3 + data[0x1c]
-        }}).flip(true).toFormat("png").toBuffer() // langsung nge write bang
+        }}).flip(true).toFormat("png").toBuffer()
     }
     else console.log("This is not a RTTEX file")
 }
