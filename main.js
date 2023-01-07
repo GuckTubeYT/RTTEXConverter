@@ -28,7 +28,7 @@ async function RTTEXPack(namePNG) {
 
     RTPACKHeader.write("RTPACK")
     RTPACKHeader.writeUint32LE(compressBuffer.length, 8)
-    RTPACKHeader.writeUInt32LE(0x7c + PNGBuffer, 12)
+    RTPACKHeader.writeUInt32LE(0x7c + PNGBuffer.length, 12)
     RTPACKHeader[16] = 1
     return Buffer.concat([RTPACKHeader, compressBuffer])
 }
