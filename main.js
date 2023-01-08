@@ -25,7 +25,7 @@ async function RTTEXPack(namePNG) {
     RTTEXHeader.writeInt32LE(1, 32)
     RTTEXHeader.writeInt32LE(PNGMetaData.height, 100)
     RTTEXHeader.writeInt32LE(PNGMetaData.width, 104)
-    RTTEXHeader.writeInt32LE(fs.readFileSync(namePNG).length, 108)
+    RTTEXHeader.writeInt32LE(PNGBuffer.length, 108)
     RTTEXHeader.writeInt32LE(0, 112)
     
     const RTPACKHeader = Buffer.alloc(32)
