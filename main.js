@@ -43,8 +43,8 @@ async function RTTEXUnpack(nameFile) {
     if (data.slice(0, 6).toString() === "RTPACK") data = zlib.inflateSync(data.slice(32))
     if (data.slice(0, 6).toString() === "RTTXTR") {
         return await sharp(data.slice(0x7c), {raw: {
-            width: data.readInt32LE(8),
-            height: data.readInt32LE(12),
+            width: data.readInt32LE(12),
+            height: data.readInt32LE(8),
             channels: 3 + data[0x1c]
         }}).flip(true).toFormat("png").toBuffer()
     }
